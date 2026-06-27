@@ -59,7 +59,7 @@ The project name should be specific enough that you and your team understand its
 For example:
 
 ```text
-Q4 Product Launch
+Q3 Product Launch
 Customer Research Notes
 Capstone Project Documentation
 Client Account Workspace
@@ -127,9 +127,9 @@ document1.pdf
 Use a more descriptive name like:
 
 ```text
-Q4-2025-Marketing-Plan.pdf
-Student-App-Requirements.md
-Client-Brand-Guidelines.pdf
+Q3-2026-Marketing-Plan.pdf
+Student-Website-Requirements.md
+Client-naming-Guidelines.pdf
 ```
 
 Good file names make it easier for Claude to find and use the right information.
