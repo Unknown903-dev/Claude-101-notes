@@ -1,121 +1,316 @@
+# How Claude Code Works
 
--------------------------------------
+## Agentic Loops
 
-claude can be best explained thorught agentic loops
-1. You enter a prompt into Claude Code.
-2. Claude gathers the context it needs by interacting with the model, which returns text or a tool call that Claude Code can execute.
-3. It takes action — for example, editing a file or running a command.
-4. It verifies the results and determines whether they achieve what your prompt set out to do.
-5. If they do, Claude finishes and waits for the next prompt. If they don't, it loops back and tries again until the results are complete and verifiable.
+Claude Code works through an agentic loop.
 
- Throughout this loop, you can add context, interrupt, or steer the model to help guide it toward your goal
+An agentic loop means Claude does not just answer with text. It can understand a goal, gather context, use tools, take actions, verify results, and continue working until the task is complete.
 
-Context
-Claude has a context window that determines how much of your conversation, file contents, command outputs, and more it can store and reference. 
-Once you reach that limit, Claude Code compacts your conversation — automatically determining what it can remove or summarize to bring the context 
-window back down to a usable size.
+A simple version of the loop looks like this:
 
-Tools
+```text
+Prompt → Gather Context → Take Action → Verify Results → Repeat if Needed
+```
 
-Tools are the backbone of how agents work. Most AI assistants simply take text in and return text out. 
-Tools let Claude Code determine when to execute code to get closer to completing a task. 
-This could be a file-reading tool, a web search tool, or any number of other capabilities. Claude Code uses semantic 
-understanding to determine when to call a tool and how to use the output.
+## Step 1: You Enter a Prompt
 
+The process starts when you give Claude Code a prompt.
 
-Permissions
+Example:
 
-Claude Code has several permission modes:
-- Default behavior: Claude asks for explicit permission before editing a file or running a shell command.
-- Auto-accept: Files are edited without asking, but commands still require approval.
-- Plan mode: Uses read-only tools to compile a plan of action before starting any work.
+```text
+Add a dark mode toggle to the app header. It should switch the full app between light mode and dark mode.
+```
 
---------------------------------------------------------------------------
+Claude reads the prompt and determines what information it needs before acting.
 
-Installing Claude Code
-Claude Code is simple to install whether you want to use it in your terminal, on the web, or in your IDE.
+## Step 2: Claude Gathers Context
 
-Terminal
+Claude then gathers context.
 
-On macOS, Linux, or WSL, use the curl command to install it in one go. If you prefer Homebrew, you can also use brew install, but note that this method doesn't support auto-updates.
+It may read files, inspect the project structure, search through code, or use tools to understand how the project works.
 
-On Windows, there are a few options. In PowerShell, use the Invoke-RestMethod command. In CMD, use the curl command. There's also a winget command available, though like Homebrew, it won't auto-update.
+This is important because Claude needs to know where changes should be made and what conventions the project already follows.
 
-Terminal showing Claude Code successfully installed via curl
-After installation, you should be able to run the claude command. If not, restart your terminal. Navigate to your project directory and run:
+## Step 3: Claude Takes Action
 
+After understanding the task, Claude can take action.
+
+Depending on permissions, it may:
+
+* Read files
+* Edit files
+* Create files
+* Run commands
+* Search documentation
+* Execute tests
+* Inspect command output
+
+This is what makes Claude Code different from a normal chatbot. It can use tools to work directly inside a project.
+
+## Step 4: Claude Verifies the Result
+
+After taking action, Claude checks whether the result matches the original goal.
+
+It may run tests, inspect files again, review output, or troubleshoot errors.
+
+If the task is complete, Claude stops and waits for the next prompt.
+
+If the result is not correct, Claude loops back, makes adjustments, and verifies again.
+
+## Step 5: You Can Steer the Process
+
+During this loop, you can interrupt, add context, or correct Claude.
+
+For example, you can say:
+
+```text
+Do not use that library. Use the package we already have installed.
+```
+
+Or:
+
+```text
+That file is not the right place. Check the components folder instead.
+```
+
+This helps guide Claude toward the correct result.
+
+## Context Window
+
+Claude has a context window.
+
+The context window is the amount of information Claude can hold in memory during a session.
+
+The context window can include:
+
+* Your prompts
+* Claude’s responses
+* File contents
+* Command outputs
+* Tool results
+* Error messages
+* Project context
+
+Because the context window is limited, it is important to manage it carefully.
+
+When the context gets too full, Claude Code may compact the conversation. Compaction summarizes older information and removes unnecessary details so the session can continue.
+
+Compaction is helpful, but it can lose some details. Important project rules should be saved in `CLAUDE.md` instead of relying only on the conversation.
+
+## Tools
+
+Tools are the backbone of how Claude Code works.
+
+Most AI assistants only receive text and return text. Claude Code can use tools to interact with the project and complete tasks.
+
+Tools can allow Claude to:
+
+* Read files
+* Edit files
+* Run terminal commands
+* Search the web
+* Inspect a codebase
+* Use connected services
+* Validate results
+
+Claude uses semantic understanding to decide when a tool is needed and how to use the result.
+
+## Permissions
+
+Claude Code has several permission modes.
+
+## Default Approval Mode
+
+In the default mode, Claude asks for permission before editing files or running shell commands.
+
+This gives you more control and lets you review changes before they happen.
+
+Use this mode when you want to stay closely involved.
+
+## Auto-Accept Mode
+
+In auto-accept mode, Claude can automatically accept file edits.
+
+However, commands still require approval.
+
+This mode is faster, but you should use it carefully.
+
+Use auto-accept when you trust the task and want Claude to move faster.
+
+## Plan Mode
+
+Plan Mode is a read-only mode.
+
+Claude can inspect the project and create a plan, but it cannot edit files.
+
+This is useful for complex changes because it lets Claude understand the codebase before writing code.
+
+To enter Plan Mode, press:
+
+```text
+Shift + Tab
+```
+
+Cycle through the options until Plan Mode is enabled.
+
+A good Plan Mode prompt looks like this:
+
+```text
+My app needs a dark mode toggle across the entire app. Create a plan for how to implement it. Find the best place to add the toggle, identify the files that need to change, and explain how the theme should be handled. Do not edit files yet.
+```
+
+After Claude gives you the plan, review it. If the plan is good, approve it and let Claude begin implementation.
+
+## Installing Claude Code
+
+Claude Code can be installed and used in several places:
+
+* Terminal
+* Visual Studio Code
+* JetBrains IDEs
+* Claude Desktop
+* Claude Web
+
+## Terminal
+
+The terminal version is often the best option if you want access to the newest features first.
+
+On macOS, Linux, or WSL, Claude Code can be installed through a terminal command.
+
+After installation, you should be able to run:
+
+```bash
 claude
-You'll go through some initial setup steps like choosing your color theme and signing in with your Claude account (Pro, Max, or Enterprise) or using an API key. If your organization has a Claude Enterprise account, be sure to select that option. Claude Code login method selection: subscription, API, or third-party platform
+```
 
-Whatever directory you run claude in, it will have access to that directory and all of its subfolders.
+If the command does not work immediately, restart the terminal.
 
-Visual Studio Code
+Navigate to your project directory and run:
 
-Open your Extensions panel and search for "Claude Code." Look for the extension by Anthropic with the blue verification check. Hit install.
+```bash
+claude
+```
 
-After installation, you may need to restart VS Code. Once it's running, open the command palette with Ctrl/Cmd + Shift + P and search for "Claude Code Open in New Tab." You can also click the Claude logo if it's visible in your sidebar.
+Claude will then start inside that project folder.
 
-Claude Code extension page in VS Code marketplace
-The VS Code extension provides a very similar experience to the terminal. You can also opt out of the UI and use the terminal experience directly in your settings.
+Claude Code will have access to the directory where you run it and all subfolders inside that directory.
 
-JetBrains
+## Visual Studio Code
 
-Install the Claude Code plugin from the JetBrains Marketplace. After installation, restart your IDE. When you reopen it, you'll see the Claude logo. Clicking it opens a pane with the terminal experience that works alongside your editor.
+To use Claude Code in VS Code:
 
-Claude Code plugin in the JetBrains Marketplace 
-Desktop
+1. Open the Extensions panel.
+2. Search for “Claude Code.”
+3. Install the extension from Anthropic.
+4. Restart VS Code if needed.
+5. Open the Command Palette with `Cmd + Shift + P` or `Ctrl + Shift + P`.
+6. Search for “Claude Code Open in New Tab.”
 
-After installing and signing into Claude Desktop, you'll see a toggle at the top labeled "Code." The look and feel is similar to the chat side of things, but it lets you work in a specific folder, change permissions, and even work in a cloud environment. Claude Desktop Code view showing recent project folders
+The VS Code extension gives you an experience similar to the terminal, but integrated with your editor.
 
-Web
+## JetBrains
 
-On the web, access Claude Code by going to claude.ai/code, or by clicking the "Code" label in the sidebar of the chat app. This works similarly to the desktop app, but you're restricted to GitHub repositories.
+To use Claude Code in a JetBrains IDE:
 
-Claude Code on the web at claude.ai/code with repository selection
-Which One Should I Use?
+1. Open the JetBrains Marketplace.
+2. Search for the Claude Code plugin.
+3. Install it.
+4. Restart the IDE.
+5. Click the Claude logo to open Claude Code.
 
-If you want to stay on the cutting edge, the terminal is your best bet — features ship there first. The IDE integrations offer a nearly identical experience if you prefer Claude Code to feel more intertwined with your code editor.
+This gives you a Claude Code panel inside your IDE.
 
-Desktop is great for letting Claude run in the background while you handle other tasks.
+## Claude Desktop
 
-Claude Code on the web is a solid option if you want to remotely work on projects through a GitHub repository.
+Claude Desktop includes a Code mode.
 
-However you want to use Claude Code is up to you.
+After installing and signing in, you can use the Code toggle to work with a specific folder, change permissions, and use Claude Code from the desktop app.
 
+This can be useful if you want Claude to work while you handle other tasks.
 
-----------------------------------------------------------
+## Claude Web
 
+Claude Code is also available through the web at:
 
-your first prompt 
+```text
+claude.ai/code
+```
 
-You talk to Claude Code like you would any AI assistant. When entering your prompt, here are some things to consider that can both protect you and make things easier.
+The web version is useful for working with GitHub repositories remotely.
 
-Auto-Accept vs. Approval
+However, the web version is more limited because it is restricted to GitHub repositories.
 
-You can choose whether Claude auto-accepts every file change it suggests, or whether it asks for your explicit permission each time. Press Shift + Tab to cycle between modes.
+## Which Version Should You Use?
 
-Approval mode: Claude asks permission each time it wants to edit a file or run a command.
-Auto-accept mode: File edits are automatically approved, but commands still require your permission.
-There's no right or wrong answer — it's whatever you're comfortable with.
+Use the terminal if you want the newest Claude Code features first.
 
-Claude Code in auto-accept mode, reading files and working through a task
-Plan Mode
+Use VS Code or JetBrains if you want Claude Code inside your editor.
 
-Within the Shift + Tab menu is Plan Mode. Plan mode takes your prompt and uses read-only tools to analyze your codebase and research your suggested implementation. It will ask clarifying questions along the way, then return a detailed plan it can execute.
+Use Claude Desktop if you want a more app-based workflow.
 
-Plan mode is great for planning complex changes or doing a safe code review. Many times you'll be asking Claude to handle multi-step implementations toward a feature, and this is exactly where Plan Mode excels.
+Use Claude Web if you want to work remotely through GitHub repositories.
 
-Claude Code with plan mode on, showing the status bar indicator
-Example: Add a Dark Mode Toggle
+## Writing Your First Prompt
 
-Let's walk through an example. Say you have an application that needs a dark mode toggle. Open the root directory of your project and run claude. Press Shift + Tab a couple of times to enter Plan Mode, then write a prompt like:
+When writing a prompt for Claude Code, be specific.
 
+Instead of saying:
 
-My app needs a dark mode implemented across the entire app. Can you create a toggle switch on the header that allows a user to toggle between light mode and dark mode? I need you to find a good contrast color that works based on my existing light theme.
-Entering the dark mode prompt in Claude Code with plan mode enabled
-Let Claude plan it out. After reviewing the plan, if it looks good, accept it and let Claude ask you for approval at each step. At the end, you can see exactly what Claude did and how it reached its conclusions.
+```text
+Add dark mode.
+```
 
-   
-Recap
+Write:
 
-When using Claude Code, try to be as descriptive as possible with your prompt. If you want to stay in the loop at every step, you can. Use Plan Mode to let Claude dig into the details of what you want to achieve before executing on any code.
+```text
+Add a dark mode toggle to the app header. The toggle should switch the entire app between light mode and dark mode. Use the existing theme colors and choose a dark mode color palette with good contrast. Start in Plan Mode and do not edit files until I approve the plan.
+```
+
+A detailed prompt helps Claude understand the goal, constraints, and success criteria.
+
+## Auto-Accept vs Approval
+
+You can switch between permission modes using:
+
+```text
+Shift + Tab
+```
+
+Approval mode is safer because Claude asks before making edits or running commands.
+
+Auto-accept mode is faster because Claude can apply file edits automatically.
+
+Plan Mode is safest for complex tasks because Claude can only inspect and plan.
+
+## Example Prompt: Dark Mode Toggle
+
+Here is a good first prompt:
+
+```text
+My app needs dark mode implemented across the entire app. Create a toggle switch in the header that lets the user switch between light mode and dark mode. Use my existing light theme as the base and choose dark mode colors with strong contrast. Start by analyzing the project structure in Plan Mode. Do not edit files until I approve the plan.
+```
+
+This prompt is strong because it explains:
+
+* What feature is needed
+* Where the feature should appear
+* What design constraint matters
+* That Claude should use Plan Mode first
+* That Claude should not edit files without approval
+
+## Recap
+
+Claude Code works through an agentic loop.
+
+It reads your prompt, gathers context, uses tools, takes action, verifies results, and repeats until the task is complete.
+
+The context window is Claude’s working memory, so it should be managed carefully.
+
+Tools allow Claude Code to read files, edit code, run commands, and verify work.
+
+Permission modes let you control how much freedom Claude has.
+
+Use Plan Mode for complex changes.
+
+Use detailed prompts to get better results.

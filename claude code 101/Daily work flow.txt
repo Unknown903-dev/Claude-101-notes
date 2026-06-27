@@ -1,126 +1,236 @@
-The Explore → Plan → Code → Commit Workflow
-If you take one thing away from this course, let it be this workflow: Explore, Plan, Code, and Commit. Without it, most people jump straight to asking Claude to write code — which means more course-correcting later on.
+# Daily Claude Code Workflow
 
-Explore and Plan
+## Explore → Plan → Code → Commit
 
-The fastest way to handle these first two steps is with Plan Mode. In plan mode, Claude can't edit files — it just reads files to gather information about how it will tackle the implementation.
+A strong Claude Code workflow follows four steps:
 
-To enter plan mode, press Shift + Tab until you see "Plan Mode" under the text input. Then write a prompt like:
+```text
+Explore → Plan → Code → Commit
+```
 
-Claude Code status bar showing plan mode on with shift+tab to cycle
-I need to add WebP conversion to our image upload pipeline. Figure out where in the pipeline it should happen, whether we need new dependencies, and how to approach it.
+This workflow helps prevent mistakes because it keeps Claude from jumping straight into writing code before understanding the project.
 
-Claude will read relevant files, run some web searches, and give you a plan of action. Review it and decide if it meets your criteria. If not, ask it to revise specific areas.
+## Explore
 
-Claude Code presenting the plan with options to approve, revise areas, or ask questions
-This is the best place to course-correct because it's before any code is written. You can also run the explore subagent without being in plan mode if you just want a general summary of your codebase without intending to make changes afterward.
+The first step is exploration.
 
-Code
+Claude should inspect the relevant files, understand the codebase, identify the current structure, and learn how the feature should fit into the project.
 
-Once the plan looks good, select "approve" to accept it and let Claude work through the list items. You can choose whether Claude auto-accepts file edits or asks you each time.
+This step is important because Claude needs context before making changes. Without exploration, it may make incorrect assumptions or edit the wrong files.
 
-Claude will do its best to troubleshoot before considering the plan "finished," but at times you'll need to step in. This is the benefit of working with Plan Mode — after execution, you also have the context of how you got to the results, which helps guide Claude's next decisions.
+A good exploration prompt looks like this:
 
-A few tips to make the coding phase smoother:
+```text
+Explore the project and identify where this feature should be implemented. Do not edit any files yet. First, explain the relevant files, dependencies, and current structure.
+```
 
-Define a success criteria. For Claude to be confident in its results, it needs to be clear on what "correct" looks like. Make this explicit when writing your plan.
-Add tools. Tools that help Claude complete its goals remove a lot of back and forth. For example, if you're building web UIs, install the Claude in Chrome extension so Claude Code can control a browser tab and test the UI directly.
+## Plan
 
-The Claude in Chrome extension page in the Chrome Web Store
-Include a test suite. Give Claude a test suite it can continuously validate against. Claude can even write tests for you. Before handing this off, make sure the tests are a reliable source of truth to avoid false positives.
-Quick tip: If you find Claude keeps running into the same issues, ask it to save the solution to its CLAUDE.md file.
+The next step is planning.
 
-Commit
+Plan Mode is useful because Claude can read files and gather context without editing anything. This makes it safer for complex changes.
 
-Once you've tested the changes yourself and are happy with the results, it's time to push your code. Before you commit, run a subagent code reviewer to look at your work. A subagent gets a fresh pair of eyes on the codebase — it doesn't carry the bias the main agent might have from the session.
+To enter Plan Mode, press:
 
-A code-reviewer subagent running in Claude Code, reading files and reviewing recent changes
-Then get Claude to generate a commit message in your style. Rinse and repeat.
+```text
+Shift + Tab
+```
 
-Recap
+Cycle until you see Plan Mode enabled.
 
-To be effective with Claude Code, follow the Explore, Plan, Code, and Commit workflow:
+Then give Claude a prompt like:
 
-Explore gives Claude the relevant context it needs for your project.
-Plan creates a plan of action that Claude uses to measure success.
-Code is the back and forth between you and Claude before settling on the final outcome.
-Commit helps you review and push your code so you can start on your next feature.
- 
+```text
+I need to add WebP conversion to our image upload pipeline. Figure out where in the pipeline it should happen, whether we need new dependencies, and how we should approach the implementation. Do not edit files yet. Give me a plan first.
+```
 
+Claude will review the project and return a plan.
 
- Context Management
-Context is Claude's working memory. Every file it reads, every command it runs, every message you send — it all takes up space in the context window.
+This is the best time to correct Claude because no code has been written yet. If the plan is wrong, ask Claude to revise it before approving implementation.
 
-What is the Context Window?
+## Code
 
-Think of the context window as the amount of space Claude can hold in its memory. Whenever you enter a prompt, Claude reads a file, runs a tool call, or receives a tool call result, it's all adding to the context window. Since there's a finite amount of space, it becomes important to optimize how you use it.
+After the plan looks good, approve it and let Claude begin coding.
 
-Diagram showing the context window as a grid of tokens — some taken, most available
-What Happens When Context Fills Up
+During the coding phase, Claude will make changes, run commands, test results, and troubleshoot issues.
 
-When you approach the limit, the context window is automatically compacted. Compaction summarizes important details and removes unnecessary tool call results to free up space. Note that this process can potentially lose details.
+You can decide whether Claude should ask permission for every edit or automatically accept file edits.
 
-Claude Code showing 'Compacting conversation...' as it summarizes the context Claude Code displaying a compact summary of the previous conversation including key technical concepts and files
-Commands
+For smoother coding, define success criteria clearly.
 
-You can run compaction manually with the /compact command. This compacts everything up to that point. It's handy when you want to free up context space while keeping a memory of what you previously worked on.
+Example:
 
-The /compact command in Claude Code's autocomplete menu
-If you want to completely start from scratch with no memory of the previous session, run /clear. This removes everything.
+```text
+The feature is complete when:
+1. Users can upload an image.
+2. The image is converted to WebP.
+3. The original file is not stored.
+4. The converted image is saved successfully.
+5. Existing upload tests still pass.
+```
 
-Running /clear in Claude Code to start a fresh session
-To check the state of your context, run the /context command. You'll get a high-level overview of your context size, the categories taking up the most space, and a visual graphic showing the breakdown.
+Clear success criteria help Claude know when the task is actually finished.
 
-Output of the /context command showing context usage breakdown with a visual bar chart
-When to Use Which
+## Useful Coding Tips
 
-A general rule of thumb:
+Be specific with your prompt. A detailed prompt usually saves context and time because Claude does not have to guess.
 
-Use /compact when you're working on a specific feature and running up against the context limit but need to continue. Keeping the context relevant to your current feature is important.
-Use /clear when you want to start a new feature. You don't want the previous conversation to introduce bias into something new. For things you want Claude to remember across sessions, put them in your CLAUDE.md file so it doesn't have to rediscover things from scratch.
+Give Claude access to useful tools when appropriate.
 
-A CLAUDE.md file with commands, important notes, and architecture sections
-Tips for Saving Context Space
+For web UI work, a browser tool can help Claude test the interface directly.
 
-Be specific. A vague prompt might seem smaller, but it actually costs more context in the long run. Without clear instructions, Claude is forced to explore your codebase more and do its own reasoning — which takes up far more context space than a detailed prompt would.
+For backend work, tests are very important. Claude can write tests, but you should make sure the tests actually verify the correct behavior.
 
-Manage your MCP servers. MCP servers load all of their available tools into context by default, even when you're not using them. If you have servers configured for things unrelated to the current project, consider turning them off. You can also try "Skills," which work similarly to MCP servers but don't load everything into context upfront. 
+If Claude repeatedly runs into the same issue, ask it to save the solution to `CLAUDE.md`.
 
-Use subagents. Subagents run in parallel with your main agent but have a completely separate context window. For tasks where you only need the answer — like "where are the authentication endpoints located?" — a subagent does the work and returns just a summary to your main agent, keeping your primary context clean.
+Example:
 
+```text
+Save this rule to CLAUDE.md: this project uses server actions instead of API routes whenever possible.
+```
 
-Recap
+## Commit
 
-Managing context within Claude Code is crucial. Use /compact to summarize long sessions and /clear to start fresh. To use your context window effectively: be specific with your prompts, check what's consuming your current context, and use subagents to delegate tasks where you only need the result.
+After Claude finishes the implementation, test the changes yourself.
 
+Before committing, ask a code-review subagent to review the changes.
 
-Code Review
-Claude Code has a few built-in features that make your git workflow faster. Let's go through them.
+A subagent is useful because it has a fresh context window. It does not carry the same assumptions as the main Claude session that wrote the code.
 
-Review with a Subagent
+A good review prompt:
 
-Before you push a PR, ask Claude to use a subagent to review your changes. The subagent runs in its own context window with fresh eyes — it doesn't carry the bias of the main agent that just spent the session writing the code.
+```text
+Use a read-only code review subagent to review the current changes. Look for bugs, security issues, missing tests, broken conventions, and unnecessary complexity. Do not edit files. Return a prioritized list of issues.
+```
 
-When creating a code-reviewer subagent, restrict it to read-only tools. A reviewer should flag issues, not edit files. Check the subagent configuration into your repo so your whole team uses the same reviewer.
+After reviewing and fixing any issues, ask Claude to generate a commit message.
 
-The /commit-push-pr Skill
+Example:
 
-The /commit-push-pr skill handles the commit, push, and PR creation all in one step. Instead of doing each manually, just run the skill and Claude takes care of it.
+```text
+Write a clear commit message for these changes using my usual style.
+```
 
-If you have a Slack MCP server configured with channels listed in your CLAUDE.md, it will automatically post the PR link to your team's channel.
+## Context Management
 
-Session Linking with --from-pr
+Context is Claude’s working memory.
 
-When Claude creates a PR through gh pr create, the session gets linked to that PR automatically. If you need to come back to it later — maybe to address review comments or fix a failing build — run:
+Every prompt, file, command output, and tool result uses space in the context window. Since this space is limited, you need to manage it carefully.
 
+When the context window gets too full, Claude Code may compact the conversation. Compaction summarizes previous information and removes details to free up space.
+
+This is useful, but some details can be lost during compaction.
+
+## Useful Context Commands
+
+Use this command to manually compact the conversation:
+
+```bash
+/compact
+```
+
+Use this when you are still working on the same feature but need to free up context space.
+
+Use this command to completely clear the session:
+
+```bash
+/clear
+```
+
+Use this when you are starting a new feature and do not want the previous conversation to influence Claude.
+
+Use this command to check context usage:
+
+```bash
+/context
+```
+
+This shows how much context is being used and what is taking up space.
+
+## When to Use /compact vs /clear
+
+Use `/compact` when you are continuing the same feature and want Claude to keep a summary of the previous work.
+
+Use `/clear` when you are starting a new task or feature and want a clean session.
+
+Important long-term project information should go into `CLAUDE.md`, not just the conversation. That way Claude does not need to rediscover it every session.
+
+## Saving Context Space
+
+To save context, write specific prompts.
+
+A vague prompt may look shorter, but it can cause Claude to explore more files and use more context. A detailed prompt can actually save space because Claude knows exactly what to look for.
+
+Also manage MCP servers carefully. MCP servers can add tool definitions to the context window even when they are not being used.
+
+Disable MCP servers that are not relevant to the current task.
+
+Use subagents when you only need a summary of a task. For example, a subagent can answer:
+
+```text
+Where are the authentication endpoints located?
+```
+
+Then it can return only the useful summary to the main Claude session.
+
+## Code Review
+
+Before pushing a pull request, use a code-review subagent.
+
+The reviewer should use read-only tools. Its job is to identify issues, not change files.
+
+A good reviewer should check for:
+
+* Bugs
+* Security problems
+* Broken conventions
+* Missing tests
+* Overly complex code
+* Incorrect assumptions
+* Poor error handling
+
+## Commit, Push, and PR
+
+Claude Code can help with the Git workflow.
+
+A commit/push/PR skill can handle:
+
+```text
+Commit → Push → Create Pull Request
+```
+
+If a Slack MCP server is configured and channels are listed in `CLAUDE.md`, Claude can also post the PR link to the team channel.
+
+## Resuming Work From a PR
+
+If Claude creates a PR using GitHub CLI, the session can be linked to that PR.
+
+To resume work later, use:
+
+```bash
 claude --from-pr <PR_NUMBER>
-This picks up right where you left off.
+```
 
-Recap
+This helps Claude pick up the context from that pull request.
 
-Use a subagent for an unbiased code review before pushing. Use /commit-push-pr to handle the full commit-to-PR flow in one step. And use --from-pr to resume work on a PR later. These are small features, but they remove a lot of friction from your daily workflow.
+## Recap
 
+The best daily Claude Code workflow is:
 
+```text
+Explore → Plan → Code → Commit
+```
 
+Explore the codebase before making changes.
 
+Use Plan Mode for complex tasks.
 
+Define success criteria before coding.
+
+Use tests to verify the work.
+
+Use subagents for code review.
+
+Use `/compact`, `/clear`, and `/context` to manage context.
+
+Use `CLAUDE.md` for long-term project memory.

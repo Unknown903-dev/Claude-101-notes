@@ -1,206 +1,295 @@
-The CLAUDE.md File
-One of the most useful features in Claude Code is the CLAUDE.md file. It gives Claude Code persistent memory about your project.
+# Customizing Claude Code
 
-The Problem It Solves
+## CLAUDE.md
 
-When you open Claude Code without a CLAUDE.md file, it starts fresh every time. It has to re-explore your codebase, figure out what dependencies are needed, and understand what features are already implemented. Sometimes it makes assumptions, which makes it harder to steer Claude in the right direction.
+One of the most useful ways to customize Claude Code is by using a `CLAUDE.md` file. This file gives Claude Code persistent project memory, so it does not have to rediscover the same information every time you start a new session.
 
-CLAUDE.md solves this. It's a Markdown file you add to the root of your project, and Claude Code reads it automatically every time you start a session. Think of it as an onboarding script for your codebase. The contents of the CLAUDE.md file are appended to your prompt.
+Without a `CLAUDE.md` file, Claude Code starts fresh. It may need to re-explore the codebase, understand the project structure, identify dependencies, and figure out what has already been implemented. This can lead to repeated explanations, incorrect assumptions, and more time spent steering Claude in the right direction.
 
-An Example
+A `CLAUDE.md` file solves this by acting like an onboarding guide for your project. You place it in the root of your project, and Claude Code reads it automatically when a session starts.
 
-Here's what a typical CLAUDE.md file looks like:
--------------------------------------------------------------
+Example:
+
+```md
 # Project
 
-This is a Next.js 15 app using the App Router, Tailwind, and Drizzle ORM.
+This is a Next.js 15 app using the App Router, Tailwind CSS, and Drizzle ORM.
 
 # Commands
-- Dev server: `pnpm dev`
+
+- Start development server: `pnpm dev`
 - Run tests: `pnpm test`
-- Lint: `pnpm lint`
+- Run linting: `pnpm lint`
 
 # Code Style
-- Use 2-space indentation
-- Prefer named exports
-- All API routes go in app/api/
-- Use server actions instead of API routes where possible
--------------------------------------------------------------
 
+- Use 2-space indentation.
+- Prefer named exports.
+- Place API routes inside `app/api/`.
+- Use server actions instead of API routes when possible.
+```
 
-It's straightforward. Now if you ask Claude Code to create a React component, it already knows to use Tailwind for styling and to follow your code conventions.
+With this file, Claude already knows your stack, commands, and coding preferences before it starts making changes.
 
-A CLAUDE.md file open in VS Code showing project info, commands, and code style rules
-CLAUDE.md is for Teams
+## Team and Personal Memory
 
-You can (and should) commit your CLAUDE.md to version control so your team benefits from it. There's actually a hierarchy of memory files depending on who they're for:
+There are different levels of Claude memory.
 
-Project-level CLAUDE.md lives in the root directory of your project. Shared with the team.
-User-level CLAUDE.md lives in your configuration folder. This one is just for you and applies across all your projects. Put your personal preferences here.
+A project-level `CLAUDE.md` file lives in the root of the project. This file should be committed to version control so the entire team can share the same project context.
 
-Tips
+A user-level `CLAUDE.md` file lives in your personal Claude configuration folder. This file is only for your own preferences and can apply across multiple projects.
 
-Save corrections to memory. If you find yourself correcting Claude repeatedly — like telling it to always use server actions instead of API routes — explicitly ask Claude to save that rule to memory. Next time you open the project, it'll know.
+Project-level memory should include information that benefits the whole team, such as project architecture, commands, conventions, and important rules.
 
-Asking Claude to save a rule to the CLAUDE.md file — always use server actions instead of API routes
-Reference project docs. If you have documentation in your project that you want Claude to reference, use the @ symbol with the file path:
+User-level memory should include personal preferences, such as how you like explanations, commit messages, documentation, or code style.
 
--------------------------------------------------------------
-## README.md
+## Tips for CLAUDE.md
 
-Please read if you need more info: @README.md
--------------------------------------------------------------
+If you repeatedly correct Claude about the same thing, add that rule to `CLAUDE.md`.
 
-Start without one. We recommend starting a project without a CLAUDE.md file so you can see where you constantly have to course-correct the model. This keeps your CLAUDE.md compact and focused on only the necessary information. When you're ready, run /init to have Claude generate one for you.
+For example, if Claude keeps creating API routes when your project prefers server actions, add a rule like:
 
+```md
+# Important Rules
 
-Recap
+- Prefer server actions instead of API routes when possible.
+```
 
-The difference between a frustrating Claude Code session and a productive one often comes down to context — and the CLAUDE.md file is how you provide that context. Start with your stack, your preferences, and your commands, then build from there as you go.
+You can also reference important project files using the `@` symbol:
 
-Subagents
-Claude can delegate tasks to subagents that break them down and run component tasks in parallel, improving your context management. Each subagent operates in its own isolated context window.
+```md
+# Project Documentation
 
-How It Works
+Read the README for more context: @README.md
+```
 
-Managing context in Claude Code is important. A lot of the context window gets consumed by things like tool calls exploring your codebase or running web searches for research. What Claude discovers during that exploration isn't always relevant to the main feature you're developing.
+A good approach is to start without a `CLAUDE.md` file, notice where Claude needs repeated correction, and then add only the most useful rules. This keeps the file focused and prevents it from becoming too large.
 
-This is where subagents come in. Claude spawns a subagent to handle a task like "explore this codebase for me." The subagent runs in parallel with its own context window, does all the exploration work, and once finished, summarizes its findings and returns that summary back to Claude.
+## Subagents
 
-The result: you get the answer you were looking for, without the entire journey it took to get there cluttering your main context.
+Subagents allow Claude Code to delegate specific tasks to smaller specialized agents. Each subagent works in its own isolated context window.
 
-Creating Your Own Subagent
+This is useful because the main Claude session has limited context. If Claude spends a lot of time exploring files, searching documentation, or analyzing a large codebase, that information can fill up the main context window quickly.
 
-Subagents are defined in Markdown files with YAML frontmatter. The easiest way to get started is to let Claude generate one for you. Run:
+A subagent can handle a task such as exploring the codebase, reviewing files, or researching a specific issue. When it finishes, it returns a summary to the main Claude session instead of bringing back every detail.
 
+This keeps the main conversation cleaner and more focused.
+
+## Creating a Subagent
+
+To create a subagent, run:
+
+```bash
 /agents
-Then select "Create new agent." You'll walk through steps including choosing the scope of the agent, defining its purpose, selecting the tools it has access to, and even picking a color for it.
+```
 
-Claude will generate a name, description, and prompt for the subagent. This also tells Claude when to call the subagent based on the prompts you give it.
+Then choose “Create new agent.”
 
-Further Customization
+Claude will guide you through the setup process. You can define the agent’s purpose, choose its scope, select which tools it can use, and customize its behavior.
 
-Subagents can be customized further. Here are some highlights:
+Subagents are defined using Markdown files with YAML frontmatter. Claude can generate the initial configuration for you.
 
-Persistent memory lets your subagent retain memory across conversations. This is great if you're using it consistently on the same projects.
-Preload skills into subagents by adding the skill key and listing skills by name. Note that unlike skills in your main conversation, the entire skill is loaded into context here.
-Recap
+A subagent can be used for tasks such as:
 
-Keeping your context window clean is one of the best ways to stay productive with Claude Code. With subagents, you can run an agent in the background to handle the heavy lifting and return just the answer to your main context window.
+* Exploring a codebase
+* Reviewing code
+* Searching for bugs
+* Summarizing project structure
+* Researching documentation
+* Checking security concerns
 
-Want to go deeper? Check out our dedicated course: Introduction to subagents
+For code review, it is best to limit the subagent to read-only tools. A reviewer should identify problems, not edit files directly.
 
-skills
-repetition is always an issue you always have to give claude the same guidlines you or your company have, this is where skills come in.
-Agent skills are folders of, scripts instructions and resources to do things more accuratly and efficiently.
+## Skills
 
-for claude code we have skill.md file, the description tells claude whether to review the skill, when you tell claude to do something it matches it whith the description and activates the ones that match.
-personal skills go to homedirectory .claude/skills and follow you across your projects. these are your preferences, your commit messages, your documentation format, how you like code explained.
-project skills go in to .claude/skills anyone who clones the directory gets those skills.
+Skills help Claude Code perform repeated tasks more accurately and efficiently.
 
-skills.md file only load the name and the description.
-claude.md file load into every conversation if you want claude to use typescript strict mode that goes into claude.md
+A skill is usually a folder that contains instructions, scripts, and resources for a specific type of work. Instead of repeating the same guidelines every time, you can create a skill that Claude can load when needed.
 
+In Claude Code, a skill includes a `SKILL.md` file. The description in that file helps Claude decide when the skill should be used.
 
-MCP
-Model Context Protocol (MCP) is an open standard that lets Claude Code connect to external tools and data sources. When you ask a question, Claude automatically understands when it should use those tools to better handle your query.
+Personal skills go in:
 
-A lot of your context lives outside your codebase — in databases, productivity apps, or public repositories. MCP bridges that gap.
+```text
+~/.claude/skills
+```
 
-What Can You Do With It?
+These follow you across projects and can store your personal preferences, such as commit message style, documentation format, or how you like code explained.
 
-First, it's important to understand the concept of "tools" in agentic AI. Tools give agents like Claude Code the ability to perform actions that help them complete tasks more effectively. This is different from typical AI, where you just get a text response back.
+Project skills go in:
 
-For example, if your team uses Linear for project management, you can add a Linear MCP server to bring in the details of your specific issues. If you need up-to-date documentation for a dependency, a docs MCP server like Context7 can provide that to Claude Code.
+```text
+.claude/skills
+```
 
-Claude Code querying a Linear MCP server to retrieve issue details for ticket MEN-12 Claude Code using the Context7 MCP server to look up the latest shadcn/ui documentation
-Adding an MCP Server
+These are shared with anyone who clones the project.
 
-You can add MCP servers with the claude mcp add command. There are two main types:
+The main difference between `CLAUDE.md` and skills is how they load into context.
 
-Running claude mcp add to add an HTTP Linear MCP server from the terminal
-HTTP servers are for remote services. These are hosted by the service provider and connect over the network.
-Stdio servers are for local processes that run on your machine.
-Running claude mcp add to add a local stdio MCP server with a Python script
-You can manage your servers with /mcp inside a Claude Code session to see what's connected, check status, and disable servers you don't need.
+`CLAUDE.md` loads into every conversation. Use it for information Claude should always know.
 
-The /mcp command showing connected MCP servers and their status
-Scoping Servers
+Skills only load their name and description at first. Claude loads the full skill only when it decides the skill is relevant. This makes skills more context-efficient.
 
-MCP servers can be scoped in three ways:
+Use `CLAUDE.md` for always-needed project rules.
 
-Local — only available in the current project, just for you.
-User — available across all your projects.
-Project — uses a .mcp.json file that you check into version control so anyone on the codebase gets the exact same servers automatically.
-Context Costs
+Use skills for repeatable workflows that are only needed sometimes.
 
-MCP servers add tool definitions to your context window — even when you're not actively using them. If you have a lot of servers configured, this eats into your available context. Run /mcp to see what's connected and disable anything you're not actively using.
+## MCP
 
-The /mcp server detail view with options to view tools, reconnect, or disable a server
-If a tool has a CLI equivalent (like gh for GitHub or aws for AWS), the CLI is more context-efficient because it doesn't add persistent tool definitions.
+MCP stands for Model Context Protocol. It is an open standard that allows Claude Code to connect to external tools and data sources.
 
-You might also benefit from using a Skill instead. A Skill has a name and description loaded into context, and Claude only loads the full skill contents when it determines it needs to use it.
+A lot of useful project context lives outside the codebase. It may be in databases, project management tools, documentation websites, GitHub repositories, or other services. MCP allows Claude Code to access those tools when needed.
 
-If your MCP tools exceed 10% of your context window, Claude Code automatically switches to tool search mode, which discovers the right tools on demand — though this may not work as reliably.
+For example, an MCP server can connect Claude Code to:
 
-Recap
+* Linear issues
+* GitHub repositories
+* Databases
+* Internal documentation
+* Cloud services
+* Public documentation sources
 
-MCP connects Claude Code to your external tools and data sources. Add servers with claude mcp add. Scope them to your project with .mcp.json so your team gets them automatically. And keep an eye on context usage by disabling servers you're not actively using.
+MCP gives Claude access to tools that can help it complete tasks more effectively.
 
+## Adding MCP Servers
 
-Hooks
-Hooks let you run commands at specific points in Claude Code's lifecycle. The key difference between hooks and everything else covered in this course is that hooks are deterministic — they always run.
+You can add MCP servers using:
 
-Why Use Hooks
+```bash
+claude mcp add
+```
 
-You can tell Claude in your CLAUDE.md to run Prettier after every file edit. Most of the time it will. But sometimes it won't. A hook makes it happen every single time, no exceptions.
+There are two main types of MCP servers.
 
-Common use cases include:
+HTTP servers are remote services hosted over the network.
 
-Auto-formatting after file edits
-Logging all executed commands for compliance
-Blocking dangerous operations like modifying production files
-Sending yourself notifications when Claude finishes a task
-How They Work
+Stdio servers are local processes that run on your machine.
 
-Hooks are configured in your settings.json. You pick an event, optionally set a matcher for which tools it applies to, and provide a command to run. The available events are:
+Inside Claude Code, you can manage MCP servers with:
 
-PreToolUse — runs before a tool call
-PostToolUse — runs after a tool call completes
-UserPromptSubmit — runs when you submit a prompt, before Claude processes it
-Stop — runs when Claude finishes responding
-Notification — runs when Claude sends a notification
-You configure them through the /hooks command inside Claude Code, or by editing settings.json directly.
+```bash
+/mcp
+```
 
-The settings.json file inside the .claude directory with hooks configuration
-A Practical Example
+This lets you see which servers are connected, check their status, and disable servers you do not need.
 
-The most common hook: auto-formatting after edits. Set a PostToolUse hook with a matcher of "Edit|MultiEdit|Write" so it fires whenever Claude modifies a file. The command checks the file extension and runs the appropriate formatter — Prettier for TypeScript, gofmt for Go, whatever your project uses.
+## MCP Scopes
 
-Blocking with PreToolUse
+MCP servers can have different scopes.
 
-PreToolUse hooks can block tool calls before they execute. Your hook receives the tool name and input as JSON on stdin. The exit code determines the behavior:
+Local MCP servers are only available in the current project and only for you.
 
-Exit code 0 — proceed normally.
-Exit code 2 — block the action. The stderr message gets fed back to Claude as feedback so it knows why it was blocked and can adjust.
-Any other exit code — a non-blocking error that gets shown to you but doesn't stop anything.
-This is how you enforce hard rules. Block writes to a production config directory. Block bash commands that contain rm -rf. Block commits to main. Whatever your team needs to be guaranteed, not suggested.
+User MCP servers are available across all your projects.
 
-A settings.json file showing PreToolUse and PostToolUse hooks with matchers and commands
-Sharing Hooks with Your Team
+Project MCP servers are defined in a `.mcp.json` file and can be checked into version control so the whole team uses the same setup.
 
-Hooks configured in .claude/settings.json are project-level and can be checked into your repo. This means your entire team gets the same hooks automatically. Use the CLAUDE_PROJECT_DIR environment variable in your commands to reference scripts stored in your project, so they work regardless of Claude's current working directory.
+## MCP and Context Cost
 
-Recap
+MCP servers add tool definitions to Claude’s context window. Even if you are not actively using a server, its tools may still consume context.
 
-Hooks give you deterministic control over Claude Code's behavior. Use PostToolUse for auto-formatting and logging. Use PreToolUse to block dangerous operations. Configure them with /hooks or in settings.json. And check them into your repo so your team gets them too.
+If you have too many MCP servers enabled, they can reduce the amount of space available for your actual task.
 
-If something needs to happen every time without fail, don't put it in a prompt. Put it in a hook.
+Use `/mcp` to disable servers you are not currently using.
 
+If a tool has a command-line version, such as `gh` for GitHub or `aws` for AWS, using the CLI may be more context-efficient than using an MCP server.
 
+Skills can also be more context-efficient than MCP because Claude only loads the full skill when needed.
 
+## Hooks
 
+Hooks allow you to run commands at specific points in Claude Code’s workflow.
 
+The main difference between hooks and prompts is that hooks are deterministic. A prompt is a suggestion, but a hook always runs.
 
+For example, you can tell Claude in `CLAUDE.md` to run Prettier after editing files. Most of the time it may do it, but it is not guaranteed.
 
+A hook guarantees that formatting runs after every edit.
 
+Common uses for hooks include:
+
+* Auto-formatting files after edits
+* Logging commands for compliance
+* Blocking dangerous commands
+* Preventing changes to production files
+* Sending notifications when Claude finishes a task
+
+## Hook Events
+
+Hooks are configured in `settings.json`.
+
+Common hook events include:
+
+```text
+PreToolUse
+PostToolUse
+UserPromptSubmit
+Stop
+Notification
+```
+
+`PreToolUse` runs before a tool call.
+
+`PostToolUse` runs after a tool call completes.
+
+`UserPromptSubmit` runs when you submit a prompt, before Claude processes it.
+
+`Stop` runs when Claude finishes responding.
+
+`Notification` runs when Claude sends a notification.
+
+You can configure hooks by using:
+
+```bash
+/hooks
+```
+
+Or by editing `settings.json` directly.
+
+## Blocking Dangerous Actions
+
+`PreToolUse` hooks can block dangerous actions before they happen.
+
+For example, a hook can block:
+
+* `rm -rf`
+* Writes to production config files
+* Commits directly to `main`
+* Changes to protected directories
+
+A `PreToolUse` hook receives the tool name and input as JSON through stdin.
+
+The exit code controls what happens:
+
+```text
+Exit code 0: allow the action
+Exit code 2: block the action
+Any other exit code: show a non-blocking error
+```
+
+This is useful for enforcing hard rules that must always be followed.
+
+## Sharing Hooks With a Team
+
+Project-level hooks can be stored in:
+
+```text
+.claude/settings.json
+```
+
+This file can be committed to the repository so the entire team gets the same hooks.
+
+Use the `CLAUDE_PROJECT_DIR` environment variable in hook commands so scripts work regardless of Claude’s current working directory.
+
+## Recap
+
+Claude Code can be customized with `CLAUDE.md`, subagents, skills, MCP servers, and hooks.
+
+Use `CLAUDE.md` for project memory and team rules.
+
+Use subagents to keep the main context clean.
+
+Use skills for repeatable workflows.
+
+Use MCP to connect Claude Code to external tools and data sources.
+
+Use hooks when something must happen every time without fail.
