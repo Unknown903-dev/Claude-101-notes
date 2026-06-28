@@ -293,3 +293,6 @@ Use skills for repeatable workflows.
 Use MCP to connect Claude Code to external tools and data sources.
 
 Use hooks when something must happen every time without fail.
+
+---
+These are my personal study notes based on Anthropic materials. The notes are written in my own words and are not an official Anthropic resource. Original material copyright 2025 Anthropic. All rights reserved.

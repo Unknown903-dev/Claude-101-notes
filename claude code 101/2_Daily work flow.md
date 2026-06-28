@@ -234,3 +234,7 @@ Use subagents for code review.
 Use `/compact`, `/clear`, and `/context` to manage context.
 
 Use `CLAUDE.md` for long-term project memory.
+
+
+---
+These are my personal study notes based on Anthropic materials. The notes are written in my own words and are not an official Anthropic resource. Original material copyright 2025 Anthropic. All rights reserved.

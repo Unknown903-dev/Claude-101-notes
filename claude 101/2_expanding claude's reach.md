@@ -714,3 +714,7 @@ Use connectors when Claude needs access to your tools.
 Use Enterprise Search when the answer is inside company knowledge.
 
 Use Research when you need a detailed, cited report.
+
+
+---
+These are my personal study notes based on Anthropic materials. The notes are written in my own words and are not an official Anthropic resource. Original material copyright 2025 Anthropic. All rights reserved.

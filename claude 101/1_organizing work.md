@@ -691,3 +691,6 @@ Use projects when Claude needs to remember information.
 Use artifacts when you need a reusable output.
 
 Use skills when you want Claude to follow a repeatable workflow.
+
+---
+These are my personal study notes based on Anthropic materials. The notes are written in my own words and are not an official Anthropic resource. Original material copyright 2025 Anthropic. All rights reserved.

@@ -314,3 +314,8 @@ Permission modes let you control how much freedom Claude has.
 Use Plan Mode for complex changes.
 
 Use detailed prompts to get better results.
+
+
+
+---
+These are my personal study notes based on Anthropic materials. The notes are written in my own words and are not an official Anthropic resource. Original material copyright 2025 Anthropic. All rights reserved.

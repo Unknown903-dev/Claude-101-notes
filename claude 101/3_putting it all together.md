@@ -385,3 +385,7 @@ Claude for Chrome is best for browser-based tasks and web research.
 Claude Cowork is best for larger workflows that require multiple steps.
 
 The main idea is to use Claude where the work already happens. Instead of moving everything into one chat, different Claude products let you bring AI assistance into coding, communication, spreadsheets, presentations, browsing, and complex workflows.
+
+
+---
+These are my personal study notes based on Anthropic materials. The notes are written in my own words and are not an official Anthropic resource. Original material copyright 2025 Anthropic. All rights reserved.
